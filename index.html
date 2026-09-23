@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مساعد التقارير اليومية | عزام</title>
-    <!-- تمكين التطبيق ليعمل بكامل الشاشة عند إضافته للشاشة الرئيسية -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --primary: #2563eb;
@@ -160,13 +160,40 @@
     </div>
 
     <script>
+        // إعداد الصوت
         const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
         const TOTAL_DURATION = 3600; // 60 دقيقة بالثواني
         let timerInterval;
         let isRunning = false;
         const timerDisplay = document.getElementById('timer');
 
-        // --- نظام المؤقت الذي يعمل في الخلفية ---
+        // طلب صلاحية الإشعارات من النظام
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+            }
+        }
+
+        // دالة إرسال الإشعار
+        function sendNotification() {
+            const title = "⏰ انتهت الساعة!";
+            const options = {
+                body: "حان وقت تسجيل إنجازاتك في التقرير الآن.",
+                icon: "icon.png" // ستظهر أيقونة التطبيق هنا إذا كانت موجودة
+            };
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                // عرض إشعار نظام حقيقي
+                new Notification(title, options);
+            } else {
+                // في حال رفض المستخدم الصلاحية، نستخدم التنبيه القديم كبديل
+                alert(title + "\n" + options.body);
+            }
+        }
+
+        // --- نظام المؤقت ---
         function updateTimerDisplay(secondsLeft) {
             let m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
             let s = (secondsLeft % 60).toString().padStart(2, '0');
@@ -183,12 +210,13 @@
                 clearInterval(timerInterval);
                 isRunning = false;
                 localStorage.removeItem('timerEndTime');
+                
+                // تشغيل الصوت وإرسال الإشعار
                 alarmSound.play().catch(e => console.log("الصوت يحتاج تفاعل"));
+                sendNotification();
+                
                 updateTimerDisplay(0);
-                setTimeout(() => {
-                    alert("⏰ حان وقت تسجيل إنجازات هذه الساعة!");
-                    resetTimer();
-                }, 500);
+                resetTimer();
             } else {
                 updateTimerDisplay(timeLeft);
             }
@@ -196,6 +224,9 @@
 
         function startTimer() {
             if (isRunning) return;
+
+            // طلب صلاحية الإشعارات عند ضغط زر "بدء"
+            requestNotificationPermission();
 
             // تشغيل صامت للسماح بالصوت لاحقاً
             alarmSound.play().then(() => {
@@ -205,7 +236,6 @@
 
             let endTime = localStorage.getItem('timerEndTime');
             
-            // إذا لم يكن هناك وقت انتهاء محفوظ، أو الوقت المحفوظ قد مضى
             if (!endTime || endTime <= Date.now()) {
                 let savedRemaining = localStorage.getItem('pausedTimeLeft');
                 let timeToRun = savedRemaining ? parseInt(savedRemaining) : TOTAL_DURATION;
@@ -217,7 +247,7 @@
 
             isRunning = true;
             timerInterval = setInterval(timerTick, 1000);
-            timerTick(); // تحديث فوري
+            timerTick(); 
         }
 
         function pauseTimer() {
@@ -252,12 +282,10 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
             
-            // 1. الحفظ في سجل الساعة (المسودة)
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
             logs.push({ time: timeString, text: text });
             localStorage.setItem('workLogs', JSON.stringify(logs));
             
-            // 2. النقل التلقائي إلى المهام المنجزة
             const doneTextarea = document.getElementById('task-done');
             const currentDoneText = doneTextarea.value.trim();
             const newEntry = `- ${text} (${timeString})`;
@@ -267,7 +295,6 @@
             } else {
                 doneTextarea.value = currentDoneText + '\n' + newEntry;
             }
-            // حفظ التعديل التلقائي في الذاكرة
             localStorage.setItem('task-done', doneTextarea.value);
 
             input.value = "";
@@ -309,7 +336,6 @@
             el.addEventListener('input', () => localStorage.setItem(id, el.value));
         });
 
-        // --- تجميع التقرير ---
         function buildReportString() {
             const done = document.getElementById('task-done').value;
             const progress = document.getElementById('task-progress').value;
@@ -332,20 +358,17 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // --- فحص حالة المؤقت عند فتح التطبيق ---
         window.onload = function() {
             renderLogs();
             let endTime = localStorage.getItem('timerEndTime');
             
             if (endTime) {
                 if (endTime > Date.now()) {
-                    // العداد كان يعمل والوقت لم ينتهِ بعد
                     startTimer();
                 } else {
-                    // انتهى الوقت أثناء إغلاق التطبيق
                     localStorage.removeItem('timerEndTime');
                     updateTimerDisplay(0);
-                    alert("⏰ لقد انتهت ساعة العمل أثناء إغلاقك للتطبيق! يرجى تسجيل إنجازاتك.");
+                    sendNotification(); // إرسال إشعار إذا دخل التطبيق ووجد أن الوقت منتهي
                     resetTimer();
                 }
             } else {
