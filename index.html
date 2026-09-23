@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مساعد التقارير اليومية | عزام</title>
+    <!-- تمكين التطبيق ليعمل بكامل الشاشة عند إضافته للشاشة الرئيسية -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <style>
         :root {
             --primary: #2563eb;
@@ -22,7 +25,7 @@
             margin: 0;
             padding: 20px;
         }
-        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.5rem; }
         .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -36,26 +39,29 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
-        h2 { font-size: 1.2rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
         
         /* Timer Styles */
         .timer-display {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--primary);
+            font-variant-numeric: tabular-nums;
         }
         .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         button {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 15px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             transition: 0.2s;
+            flex: 1;
+            min-width: 80px;
         }
         button:hover { background-color: var(--primary-hover); }
         .btn-danger { background-color: #ef4444; }
@@ -68,40 +74,42 @@
         /* Inputs & Textareas */
         input[type="text"], textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 5px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-family: inherit;
             box-sizing: border-box;
             resize: vertical;
         }
-        textarea { height: 80px; }
+        textarea { height: 90px; }
         
         /* Log List */
         .log-list {
             list-style: none;
             padding: 0;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
         }
         .log-list li {
             background: var(--bg);
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 8px;
-            border-radius: 6px;
+            border-radius: 8px;
             border-right: 4px solid var(--primary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             display: flex;
             justify-content: space-between;
         }
         .delete-log {
-            color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 5px;
+            color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 1.2rem;
         }
 
         @media (max-width: 768px) {
             .container { grid-template-columns: 1fr; }
+            body { padding: 10px; }
+            .btn-group button { font-size: 0.9rem; padding: 10px; }
         }
     </style>
 </head>
@@ -112,19 +120,19 @@
     <div class="container">
         <!-- القسم الأيسر: المؤقت وسجل الساعات -->
         <div class="card">
-            <h2>⏱️ مؤقت الإنجاز (كل 60 دقيقة)</h2>
+            <h2>⏱️ مؤقت الإنجاز (يعمل في الخلفية)</h2>
             <div class="timer-display" id="timer">60:00</div>
             <div class="btn-group">
                 <button onclick="startTimer()">▶️ بدء</button>
                 <button onclick="pauseTimer()">⏸️ إيقاف</button>
-                <button onclick="resetTimer()" class="btn-danger">🔄 إعادة ضبط</button>
-                <button onclick="testSound()" style="background-color: #64748b;">🔊 تجربة الصوت</button>
+                <button onclick="resetTimer()" class="btn-danger">🔄 تصفير</button>
             </div>
 
             <h2 style="margin-top: 30px;">📝 مسودة الإنجاز الساعي</h2>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: -5px;">(سيتم نقل المهام المضافة هنا إلى قسم "المهام المنجزة" تلقائياً)</p>
             <div style="display: flex; gap: 10px;">
-                <input type="text" id="log-input" placeholder="ماذا أنجزت في هذه الساعة؟">
-                <button onclick="addLog()" style="margin-bottom: 15px;">إضافة</button>
+                <input type="text" id="log-input" placeholder="ماذا أنجزت؟">
+                <button onclick="addLog()" style="margin-bottom: 15px; flex: 0.3;">إضافة</button>
             </div>
             <ul class="log-list" id="log-list"></ul>
             <button onclick="clearLogs()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 0.9rem;">🗑️ مسح كل المسودات</button>
@@ -152,66 +160,90 @@
     </div>
 
     <script>
-        // --- إعدادات الصوت ---
-        // استخدام ملف صوتي مجاني متاح عبر الإنترنت للتنبيه
         const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-        
-        function testSound() {
-            alarmSound.currentTime = 0;
-            alarmSound.play().catch(e => alert("يجب التفاعل مع الصفحة أولاً لتشغيل الصوت."));
-        }
-
-        // --- إعدادات المؤقت ---
-        let timeLeft = 3600; 
+        const TOTAL_DURATION = 3600; // 60 دقيقة بالثواني
         let timerInterval;
         let isRunning = false;
-
         const timerDisplay = document.getElementById('timer');
 
-        function updateTimerDisplay() {
-            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            let s = (timeLeft % 60).toString().padStart(2, '0');
+        // --- نظام المؤقت الذي يعمل في الخلفية ---
+        function updateTimerDisplay(secondsLeft) {
+            let m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+            let s = (secondsLeft % 60).toString().padStart(2, '0');
             timerDisplay.textContent = `${m}:${s}`;
         }
 
-        function startTimer() {
-            if (!isRunning) {
-                // تشغيل صامت للصوت لتجنب حظر المتصفحات للتشغيل التلقائي لاحقاً
-                alarmSound.play().then(() => {
-                    alarmSound.pause();
-                    alarmSound.currentTime = 0;
-                }).catch(e => console.log("تحتاج لتشغيل الصوت يدوياً أول مرة"));
+        function timerTick() {
+            let endTime = localStorage.getItem('timerEndTime');
+            if (!endTime) return;
 
-                isRunning = true;
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        isRunning = false;
-                        alarmSound.play(); // رنين المنبه
-                        alert("⏰ حان وقت تسجيل إنجازات هذه الساعة!");
-                        timeLeft = 3600;
-                        updateTimerDisplay();
-                    }
-                }, 1000);
+            let timeLeft = Math.round((endTime - Date.now()) / 1000);
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                localStorage.removeItem('timerEndTime');
+                alarmSound.play().catch(e => console.log("الصوت يحتاج تفاعل"));
+                updateTimerDisplay(0);
+                setTimeout(() => {
+                    alert("⏰ حان وقت تسجيل إنجازات هذه الساعة!");
+                    resetTimer();
+                }, 500);
+            } else {
+                updateTimerDisplay(timeLeft);
             }
         }
 
+        function startTimer() {
+            if (isRunning) return;
+
+            // تشغيل صامت للسماح بالصوت لاحقاً
+            alarmSound.play().then(() => {
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+            }).catch(e => {});
+
+            let endTime = localStorage.getItem('timerEndTime');
+            
+            // إذا لم يكن هناك وقت انتهاء محفوظ، أو الوقت المحفوظ قد مضى
+            if (!endTime || endTime <= Date.now()) {
+                let savedRemaining = localStorage.getItem('pausedTimeLeft');
+                let timeToRun = savedRemaining ? parseInt(savedRemaining) : TOTAL_DURATION;
+                
+                endTime = Date.now() + (timeToRun * 1000);
+                localStorage.setItem('timerEndTime', endTime);
+                localStorage.removeItem('pausedTimeLeft');
+            }
+
+            isRunning = true;
+            timerInterval = setInterval(timerTick, 1000);
+            timerTick(); // تحديث فوري
+        }
+
         function pauseTimer() {
+            if (!isRunning) return;
             clearInterval(timerInterval);
             isRunning = false;
+            
+            let endTime = localStorage.getItem('timerEndTime');
+            if (endTime) {
+                let timeLeft = Math.round((endTime - Date.now()) / 1000);
+                if (timeLeft > 0) {
+                    localStorage.setItem('pausedTimeLeft', timeLeft);
+                }
+                localStorage.removeItem('timerEndTime');
+            }
         }
 
         function resetTimer() {
             clearInterval(timerInterval);
             isRunning = false;
-            timeLeft = 3600;
-            updateTimerDisplay();
+            localStorage.removeItem('timerEndTime');
+            localStorage.removeItem('pausedTimeLeft');
+            updateTimerDisplay(TOTAL_DURATION);
         }
 
-        // --- إعدادات المسودات ---
+        // --- نظام المهام والنقل التلقائي ---
         function addLog() {
             const input = document.getElementById('log-input');
             const text = input.value.trim();
@@ -220,10 +252,24 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
             
+            // 1. الحفظ في سجل الساعة (المسودة)
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
             logs.push({ time: timeString, text: text });
             localStorage.setItem('workLogs', JSON.stringify(logs));
             
+            // 2. النقل التلقائي إلى المهام المنجزة
+            const doneTextarea = document.getElementById('task-done');
+            const currentDoneText = doneTextarea.value.trim();
+            const newEntry = `- ${text} (${timeString})`;
+            
+            if (currentDoneText === "") {
+                doneTextarea.value = newEntry;
+            } else {
+                doneTextarea.value = currentDoneText + '\n' + newEntry;
+            }
+            // حفظ التعديل التلقائي في الذاكرة
+            localStorage.setItem('task-done', doneTextarea.value);
+
             input.value = "";
             renderLogs();
         }
@@ -248,7 +294,7 @@
         }
 
         function clearLogs() {
-            if(confirm("هل أنت متأكد من مسح جميع مسودات اليوم؟")) {
+            if(confirm("هل أنت متأكد من مسح جميع مسودات اليوم؟ (لن يمسح هذا ما تم نقله للمهام المنجزة)")) {
                 localStorage.removeItem('workLogs');
                 renderLogs();
             }
@@ -269,14 +315,8 @@
             const progress = document.getElementById('task-progress').value;
             const issues = document.getElementById('task-issues').value;
             const next = document.getElementById('task-next').value;
-            
-            const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
-            let logsText = "";
-            if (logs.length > 0) {
-                logsText = "\n\n---\n*تفاصيل المتابعة الساعية:*\n" + logs.map(l => `- [${l.time}] ${l.text}`).join('\n');
-            }
 
-            return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${done || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${progress || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${issues || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${next || "لا يوجد"}${logsText}`;
+            return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${done || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${progress || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${issues || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${next || "لا يوجد"}`;
         }
 
         function generateAndCopyReport() {
@@ -286,15 +326,35 @@
             });
         }
 
-        // --- إرسال عبر واتساب ---
         function sendViaWhatsApp() {
             const finalReport = buildReportString();
-            // استخدام رابط واتساب العالمي (يعمل على المتصفح والتطبيق)
             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(finalReport)}`;
             window.open(whatsappUrl, '_blank');
         }
 
-        renderLogs();
+        // --- فحص حالة المؤقت عند فتح التطبيق ---
+        window.onload = function() {
+            renderLogs();
+            let endTime = localStorage.getItem('timerEndTime');
+            
+            if (endTime) {
+                if (endTime > Date.now()) {
+                    // العداد كان يعمل والوقت لم ينتهِ بعد
+                    startTimer();
+                } else {
+                    // انتهى الوقت أثناء إغلاق التطبيق
+                    localStorage.removeItem('timerEndTime');
+                    updateTimerDisplay(0);
+                    alert("⏰ لقد انتهت ساعة العمل أثناء إغلاقك للتطبيق! يرجى تسجيل إنجازاتك.");
+                    resetTimer();
+                }
+            } else {
+                let paused = localStorage.getItem('pausedTimeLeft');
+                if (paused) {
+                    updateTimerDisplay(parseInt(paused));
+                }
+            }
+        };
     </script>
 </body>
 </html>
