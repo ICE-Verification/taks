@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد التقارير اليومية | عزام</title>
+    <title>مساعد الانجازات اليومية | عزام</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
@@ -46,15 +46,23 @@
         .btn-success { background-color: #10b981; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px;}
         .btn-whatsapp { background-color: var(--whatsapp); width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; font-weight: bold; }
         .btn-archive { background-color: #64748b; margin-top: 10px; width: 100%; padding: 10px;}
+        
+        .btn-small { padding: 5px 10px; margin: 0; min-width: auto; font-size: 0.8rem; width: auto;}
 
         /* التوسيم Tags */
-        .tags-container { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tag { background: var(--border); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; color: var(--text); transition: 0.2s; }
+        .tags-container { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
+        .tag { background: var(--border); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; color: var(--text); transition: 0.2s; display: flex; align-items: center; gap: 5px;}
         .tag:hover { background: var(--primary); color: white; }
+        .tag-delete { color: #ef4444; font-weight: bold; padding: 0 4px; border-radius: 50%; }
+        .tag-delete:hover { background: rgba(255,255,255,0.3); }
+        
+        .add-tag-box { display: flex; gap: 5px; width: 100%; margin-bottom: 15px;}
+        .add-tag-box input { margin: 0; padding: 8px; height: 100%; font-size: 0.9rem;}
+        .add-tag-box button { margin: 0; padding: 8px; flex: 0.2; font-size: 1rem;}
 
         /* شاشة التنبيه والأرشيف */
         .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; backdrop-filter: blur(5px); }
-        .overlay-content { background: var(--card); padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; color: var(--text);}
+        .overlay-content { background: var(--card); padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; color: var(--text);}
         .btn-stop-alarm { background-color: var(--warning); font-size: 1.2rem; padding: 20px; width: 100%; margin-top: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); animation: pulse 1.5s infinite; color: black; font-weight: bold;}
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
@@ -66,9 +74,9 @@
         .delete-log { color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 10px; font-size: 1.4rem; }
         
         .archive-item { text-align: right; background: var(--bg); padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        .archive-item pre { white-space: pre-wrap; font-family: inherit; margin: 10px 0; font-size: 0.9rem;}
+        .archive-item pre { white-space: pre-wrap; font-family: inherit; margin: 10px 0; font-size: 0.95rem; line-height: 1.5;}
 
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } body { padding: 10px; } }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } body { padding: 10px; } .archive-actions { flex-wrap: wrap; justify-content: flex-start;} }
     </style>
 </head>
 <body>
@@ -79,10 +87,9 @@
     </div>
 
     <div class="container">
-        <!-- القسم الأيسر: المؤقت -->
+        <!-- القسم الأيسر: المؤقت والمسودات -->
         <div class="card">
             
-            <!-- طبقة التنبيه (تظهر فقط عند انتهاء الوقت) -->
             <div id="alarm-overlay" class="overlay">
                 <div class="overlay-content">
                     <h2 style="border:none; color: #d97706; font-size: 2rem; margin:0;">⏰ انتهت الساعة!</h2>
@@ -101,12 +108,13 @@
 
             <h2 style="margin-top: 30px;">📝 مسودة الإنجاز الساعي</h2>
             
-            <!-- التوسيم -->
-            <div class="tags-container">
-                <span class="tag" onclick="addTag('#إدارة')">#إدارة</span>
-                <span class="tag" onclick="addTag('#مطعم')">#مطعم</span>
-                <span class="tag" onclick="addTag('#تصميم')">#تصميم</span>
-                <span class="tag" onclick="addTag('#اجتماع')">#اجتماع</span>
+            <!-- إضافة وتعديل الوسوم -->
+            <div class="add-tag-box">
+                <input type="text" id="new-tag-input" placeholder="وسم جديد (مثال: تسويق)">
+                <button onclick="createNewTag()">+ إضافة وسم</button>
+            </div>
+            <div class="tags-container" id="tags-container">
+                <!-- سيتم تحميل الوسوم هنا عبر الجافاسكريبت -->
             </div>
 
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -158,38 +166,73 @@
         }
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
 
-        // --- 2. الإدخال الصوتي ---
-        function startVoiceRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("للأسف، متصفحك لا يدعم الإدخال الصوتي. جرب استخدام جوجل كروم.");
-                return;
-            }
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'ar-SA'; // اللغة العربية
-            const micBtn = document.getElementById('mic-btn');
-            const inputField = document.getElementById('log-input');
-
-            recognition.start();
-            micBtn.style.backgroundColor = '#10b981'; // يتحول للأخضر أثناء الاستماع
-
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                inputField.value = inputField.value ? inputField.value + " " + transcript : transcript;
-                micBtn.style.backgroundColor = '#ef4444'; // يعود للأحمر
-            };
-            recognition.onerror = () => micBtn.style.backgroundColor = '#ef4444';
-            recognition.onend = () => micBtn.style.backgroundColor = '#ef4444';
+        // --- 2. إدارة الوسوم (Tags) الديناميكية ---
+        const defaultTags = ['#إدارة', '#مطعم', '#تصميم', '#اجتماع'];
+        
+        function loadTags() {
+            let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
+            const container = document.getElementById('tags-container');
+            container.innerHTML = '';
+            tags.forEach((tag, index) => {
+                container.innerHTML += `
+                    <span class="tag" onclick="addTag('${tag}')">
+                        ${tag} 
+                        <span class="tag-delete" onclick="event.stopPropagation(); removeCustomTag(${index})" title="حذف الوسم">×</span>
+                    </span>`;
+            });
         }
 
-        // --- 3. نظام التوسيم Tags ---
+        function createNewTag() {
+            let val = document.getElementById('new-tag-input').value.trim();
+            if(!val) return;
+            if(!val.startsWith('#')) val = '#' + val; // إضافة الهاشتاغ تلقائياً إذا نساه المستخدم
+            
+            let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
+            if(!tags.includes(val)) {
+                tags.push(val);
+                localStorage.setItem('customTags', JSON.stringify(tags));
+                loadTags();
+            }
+            document.getElementById('new-tag-input').value = '';
+        }
+
+        function removeCustomTag(index) {
+            let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
+            if(confirm(`هل أنت متأكد من حذف الوسم ${tags[index]}؟`)) {
+                tags.splice(index, 1);
+                localStorage.setItem('customTags', JSON.stringify(tags));
+                loadTags();
+            }
+        }
+
         function addTag(tag) {
             const inputField = document.getElementById('log-input');
             inputField.value = inputField.value ? inputField.value + " " + tag + " " : tag + " ";
             inputField.focus();
         }
 
-        // --- إعداد المنبه والمؤقت (نفس النظام السابق) ---
+        // --- 3. الإدخال الصوتي ---
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("للأسف، متصفحك لا يدعم الإدخال الصوتي."); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ar-SA';
+            const micBtn = document.getElementById('mic-btn');
+            const inputField = document.getElementById('log-input');
+
+            recognition.start();
+            micBtn.style.backgroundColor = '#10b981';
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                inputField.value = inputField.value ? inputField.value + " " + transcript : transcript;
+                micBtn.style.backgroundColor = '#ef4444';
+            };
+            recognition.onerror = () => micBtn.style.backgroundColor = '#ef4444';
+            recognition.onend = () => micBtn.style.backgroundColor = '#ef4444';
+        }
+
+        // --- إعداد المنبه والمؤقت ---
         const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
         alarmSound.loop = true; 
         const TOTAL_DURATION = 3600;
@@ -261,7 +304,7 @@
             updateTimerDisplay(TOTAL_DURATION); alarmOverlay.style.display = "none"; alarmSound.pause();
         }
 
-        // --- إدارة المهام ---
+        // --- إدارة المهام والمسودات ---
         function addLog() {
             const input = document.getElementById('log-input');
             const text = input.value.trim();
@@ -283,7 +326,7 @@
             const list = document.getElementById('log-list'); list.innerHTML = "";
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
             logs.forEach((log, index) => {
-                list.innerHTML += `<li><span><b>[${log.time}]</b> ${log.text}</span> <span class="delete-log" onclick="deleteLog(${index})">×</span></li>`;
+                list.innerHTML += `<li><span><b>[${log.time}]</b> ${log.text}</span> <span class="delete-log" onclick="deleteLog(${index})" title="حذف">×</span></li>`;
             });
         }
 
@@ -307,19 +350,18 @@
         function generateAndCopyReport() { navigator.clipboard.writeText(buildReportString()).then(() => alert("✅ تم النسخ!")); }
         function sendViaWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(buildReportString())}`, '_blank'); }
 
-        // --- 4. الأرشيف ---
+        // --- 4. إدارة الأرشيف ---
         function saveToArchive() {
             const report = buildReportString();
             const dateStr = new Date().toLocaleDateString('ar-EG');
             let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
             
-            // تحديث تقرير اليوم إذا كان موجوداً، أو إضافته كجديد
             const existingIndex = archive.findIndex(r => r.date === dateStr);
             if (existingIndex > -1) archive[existingIndex].report = report;
             else archive.push({ date: dateStr, report: report });
             
             localStorage.setItem('reportsArchive', JSON.stringify(archive));
-            alert("✅ تم حفظ التقرير في الأرشيف بنجاح!");
+            alert("✅ تم حفظ تقرير اليوم في الأرشيف بنجاح!");
         }
 
         function openArchive() {
@@ -332,20 +374,60 @@
                 return;
             }
             
-            // عرض التقارير الأحدث أولاً
-            list.innerHTML = archive.reverse().map(a => `
+            // عرض التقارير مع أزرار التحكم الجديدة
+            list.innerHTML = [...archive].reverse().map(a => `
                 <div class='archive-item'>
-                    <h3 style="margin-top:0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;">📅 ${a.date}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin:0; color: var(--primary);">📅 ${a.date}</h3>
+                        <div class="archive-actions" style="display: flex; gap: 5px;">
+                            <button onclick="actionArchiveReport('${a.date}', 'copy')" class="btn-success btn-small">📋 نسخ</button>
+                            <button onclick="actionArchiveReport('${a.date}', 'whatsapp')" class="btn-whatsapp btn-small">💬 واتساب</button>
+                            <button onclick="deleteFromArchive('${a.date}')" class="btn-danger btn-small">🗑️ حذف</button>
+                        </div>
+                    </div>
                     <pre>${a.report}</pre>
                 </div>
             `).join('');
+
+            list.innerHTML += `<button onclick="clearArchive()" class="btn-danger" style="width: 100%; margin-top: 15px;">🗑️ مسح الأرشيف بالكامل</button>`;
+        }
+
+        // دالة مجمعة للنسخ أو الإرسال عبر واتساب من الأرشيف
+        function actionArchiveReport(dateStr, actionType) {
+            let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
+            let targetReport = archive.find(r => r.date === dateStr);
+            if(targetReport) {
+                if (actionType === 'copy') {
+                    navigator.clipboard.writeText(targetReport.report).then(() => alert("✅ تم نسخ التقرير القديم!"));
+                } else if (actionType === 'whatsapp') {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(targetReport.report)}`, '_blank');
+                }
+            }
+        }
+
+        function deleteFromArchive(dateStr) {
+            if(confirm(`هل أنت متأكد من حذف تقرير يوم ${dateStr}؟`)) {
+                let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
+                archive = archive.filter(r => r.date !== dateStr);
+                localStorage.setItem('reportsArchive', JSON.stringify(archive));
+                openArchive(); // تحديث العرض
+            }
+        }
+
+        function clearArchive() {
+            if(confirm("⚠️ هل أنت متأكد من مسح جميع التقارير السابقة بالكامل؟")) {
+                localStorage.removeItem('reportsArchive');
+                openArchive(); 
+            }
         }
 
         function closeArchive() { document.getElementById('archive-modal').style.display = 'none'; }
 
-        // التشغيل عند التحميل
+        // --- التشغيل عند التحميل ---
         window.onload = function() {
+            loadTags(); // تحميل الوسوم
             renderLogs();
+            
             let endTime = localStorage.getItem('timerEndTime');
             if (endTime) {
                 if (endTime > Date.now()) startTimer();
