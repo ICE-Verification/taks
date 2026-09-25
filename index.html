@@ -17,110 +17,81 @@
             --border: #e2e8f0;
             --whatsapp: #25D366;
             --whatsapp-hover: #128C7E;
+            --warning: #f59e0b;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
+        /* الوضع الليلي */
+        body.dark-mode {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
         }
-        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; font-size: 1.5rem; }
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; transition: background 0.3s, color 0.3s; }
+        
+        /* شريط العنوان */
+        .header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 20px auto; }
+        h1 { color: var(--primary); font-size: 1.5rem; margin: 0; }
+        .btn-icon { background: none; border: 2px solid var(--border); color: var(--text); font-size: 1.2rem; cursor: pointer; padding: 8px 12px; border-radius: 8px; }
+
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; transition: background 0.3s; }
         h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
         
-        /* Timer Styles */
-        .timer-display {
-            font-size: 3.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 15px 0;
-            color: var(--primary);
-            font-variant-numeric: tabular-nums;
-        }
+        .timer-display { font-size: 3.5rem; font-weight: bold; text-align: center; margin: 15px 0; color: var(--primary); font-variant-numeric: tabular-nums; }
         .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
-            flex: 1;
-            min-width: 80px;
-        }
+        button { background-color: var(--primary); color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s; flex: 1; min-width: 80px; }
         button:hover { background-color: var(--primary-hover); }
-        .btn-danger { background-color: #ef4444; }
-        .btn-danger:hover { background-color: #dc2626; }
-        .btn-success { background-color: #10b981; width: 100%; margin-top: 20px; font-size: 1.1rem; padding: 15px;}
-        .btn-success:hover { background-color: #059669; }
+        .btn-danger { background-color: #ef4444; } .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: #10b981; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px;}
         .btn-whatsapp { background-color: var(--whatsapp); width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; font-weight: bold; }
-        .btn-whatsapp:hover { background-color: var(--whatsapp-hover); }
+        .btn-archive { background-color: #64748b; margin-top: 10px; width: 100%; padding: 10px;}
 
-        /* Inputs & Textareas */
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            box-sizing: border-box;
-            resize: vertical;
-        }
+        /* التوسيم Tags */
+        .tags-container { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tag { background: var(--border); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; color: var(--text); transition: 0.2s; }
+        .tag:hover { background: var(--primary); color: white; }
+
+        /* شاشة التنبيه والأرشيف */
+        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; backdrop-filter: blur(5px); }
+        .overlay-content { background: var(--card); padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; color: var(--text);}
+        .btn-stop-alarm { background-color: var(--warning); font-size: 1.2rem; padding: 20px; width: 100%; margin-top: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); animation: pulse 1.5s infinite; color: black; font-weight: bold;}
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        input[type="text"], textarea { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; box-sizing: border-box; resize: vertical; background: var(--card); color: var(--text); }
         textarea { height: 90px; }
         
-        /* Log List */
-        .log-list {
-            list-style: none;
-            padding: 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .log-list li {
-            background: var(--bg);
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border-right: 4px solid var(--primary);
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
-        }
-        .delete-log {
-            color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 1.2rem;
-        }
+        .log-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
+        .log-list li { background: var(--bg); padding: 12px; margin-bottom: 8px; border-radius: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;}
+        .delete-log { color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 10px; font-size: 1.4rem; }
+        
+        .archive-item { text-align: right; background: var(--bg); padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .archive-item pre { white-space: pre-wrap; font-family: inherit; margin: 10px 0; font-size: 0.9rem;}
 
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-            body { padding: 10px; }
-            .btn-group button { font-size: 0.9rem; padding: 10px; }
-        }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } body { padding: 10px; } }
     </style>
 </head>
 <body>
 
-    <h1>نظام تقارير العمل اليومية</h1>
+    <div class="header">
+        <h1>نظام التقارير اليومية</h1>
+        <button class="btn-icon" onclick="toggleDarkMode()">🌙 / ☀️</button>
+    </div>
 
     <div class="container">
-        <!-- القسم الأيسر: المؤقت وسجل الساعات -->
+        <!-- القسم الأيسر: المؤقت -->
         <div class="card">
-            <h2>⏱️ مؤقت الإنجاز (يعمل في الخلفية)</h2>
+            
+            <!-- طبقة التنبيه (تظهر فقط عند انتهاء الوقت) -->
+            <div id="alarm-overlay" class="overlay">
+                <div class="overlay-content">
+                    <h2 style="border:none; color: #d97706; font-size: 2rem; margin:0;">⏰ انتهت الساعة!</h2>
+                    <p style="font-size: 1.2rem;">حان وقت تسجيل ما أنجزته الآن.</p>
+                    <button class="btn-stop-alarm" onclick="stopAlarm()">🔕 إيقاف التنبيه والتسجيل</button>
+                </div>
+            </div>
+
+            <h2>⏱️ مؤقت الإنجاز</h2>
             <div class="timer-display" id="timer">60:00</div>
             <div class="btn-group">
                 <button onclick="startTimer()">▶️ بدء</button>
@@ -129,253 +100,262 @@
             </div>
 
             <h2 style="margin-top: 30px;">📝 مسودة الإنجاز الساعي</h2>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: -5px;">(سيتم نقل المهام المضافة هنا إلى قسم "المهام المنجزة" تلقائياً)</p>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="log-input" placeholder="ماذا أنجزت؟">
-                <button onclick="addLog()" style="margin-bottom: 15px; flex: 0.3;">إضافة</button>
+            
+            <!-- التوسيم -->
+            <div class="tags-container">
+                <span class="tag" onclick="addTag('#إدارة')">#إدارة</span>
+                <span class="tag" onclick="addTag('#مطعم')">#مطعم</span>
+                <span class="tag" onclick="addTag('#تصميم')">#تصميم</span>
+                <span class="tag" onclick="addTag('#اجتماع')">#اجتماع</span>
             </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="mic-btn" onclick="startVoiceRecognition()" style="flex: 0.15; background-color: #ef4444; font-size: 1.2rem; padding: 10px;" title="تحدث لإدخال المهمة">🎙️</button>
+                <input type="text" id="log-input" placeholder="ماذا أنجزت؟ (اكتب أو تحدث)">
+                <button onclick="addLog()" style="margin-bottom: 15px; flex: 0.25;">إضافة</button>
+            </div>
+            
             <ul class="log-list" id="log-list"></ul>
-            <button onclick="clearLogs()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 0.9rem;">🗑️ مسح كل المسودات</button>
+            <button onclick="clearLogs()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 0.9rem;">🗑️ مسح المسودات</button>
         </div>
 
-        <!-- القسم الأيمن: التقرير النهائي -->
+        <!-- القسم الأيمن: التقرير -->
         <div class="card">
             <h2>📋 التقرير النهائي</h2>
-            
             <label>1- المهام المنجزة:</label>
-            <textarea id="task-done" placeholder="الأعمال التي تم الانتهاء منها..."></textarea>
-
-            <label>2- المهام قيد التنفيذ (مع نسبة الإنجاز):</label>
-            <textarea id="task-progress" placeholder="مثال: تجهيز العرض التقديمي (70%)..."></textarea>
-
+            <textarea id="task-done"></textarea>
+            <label>2- المهام قيد التنفيذ:</label>
+            <textarea id="task-progress"></textarea>
             <label>3- المشكلات والعقبات:</label>
-            <textarea id="task-issues" placeholder="صعوبات أثرت على سير العمل..."></textarea>
-
+            <textarea id="task-issues"></textarea>
             <label>4- خطة اليوم التالي:</label>
-            <textarea id="task-next" placeholder="أولويات العمل للغد..."></textarea>
+            <textarea id="task-next"></textarea>
 
             <button onclick="generateAndCopyReport()" class="btn-success">📋 نسخ التقرير</button>
-            <button onclick="sendViaWhatsApp()" class="btn-whatsapp">💬 إرسال التقرير عبر واتساب</button>
+            <button onclick="sendViaWhatsApp()" class="btn-whatsapp">💬 إرسال عبر واتساب</button>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="saveToArchive()" class="btn-archive">📥 حفظ في الأرشيف</button>
+                <button onclick="openArchive()" class="btn-archive">📂 عرض الأرشيف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الأرشيف -->
+    <div id="archive-modal" class="overlay">
+        <div class="overlay-content">
+            <h2>أرشيف التقارير السابقة</h2>
+            <div id="archive-list" style="text-align: right; margin-bottom: 20px;"></div>
+            <button onclick="closeArchive()" class="btn-danger">إغلاق الأرشيف</button>
         </div>
     </div>
 
     <script>
-        // إعداد الصوت
-        const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-        const TOTAL_DURATION = 3600; // 60 دقيقة بالثواني
-        let timerInterval;
-        let isRunning = false;
-        const timerDisplay = document.getElementById('timer');
-
-        // طلب صلاحية الإشعارات من النظام
-        function requestNotificationPermission() {
-            if ("Notification" in window) {
-                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-                    Notification.requestPermission();
-                }
-            }
+        // --- 1. الوضع الليلي ---
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
+        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
 
-        // دالة إرسال الإشعار
-        function sendNotification() {
-            const title = "⏰ انتهت الساعة!";
-            const options = {
-                body: "حان وقت تسجيل إنجازاتك في التقرير الآن.",
-                icon: "icon.png" // ستظهر أيقونة التطبيق هنا إذا كانت موجودة
+        // --- 2. الإدخال الصوتي ---
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("للأسف، متصفحك لا يدعم الإدخال الصوتي. جرب استخدام جوجل كروم.");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ar-SA'; // اللغة العربية
+            const micBtn = document.getElementById('mic-btn');
+            const inputField = document.getElementById('log-input');
+
+            recognition.start();
+            micBtn.style.backgroundColor = '#10b981'; // يتحول للأخضر أثناء الاستماع
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                inputField.value = inputField.value ? inputField.value + " " + transcript : transcript;
+                micBtn.style.backgroundColor = '#ef4444'; // يعود للأحمر
             };
-
-            if ("Notification" in window && Notification.permission === "granted") {
-                // عرض إشعار نظام حقيقي
-                new Notification(title, options);
-            } else {
-                // في حال رفض المستخدم الصلاحية، نستخدم التنبيه القديم كبديل
-                alert(title + "\n" + options.body);
-            }
+            recognition.onerror = () => micBtn.style.backgroundColor = '#ef4444';
+            recognition.onend = () => micBtn.style.backgroundColor = '#ef4444';
         }
 
-        // --- نظام المؤقت ---
+        // --- 3. نظام التوسيم Tags ---
+        function addTag(tag) {
+            const inputField = document.getElementById('log-input');
+            inputField.value = inputField.value ? inputField.value + " " + tag + " " : tag + " ";
+            inputField.focus();
+        }
+
+        // --- إعداد المنبه والمؤقت (نفس النظام السابق) ---
+        const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
+        alarmSound.loop = true; 
+        const TOTAL_DURATION = 3600;
+        let timerInterval; let isRunning = false;
+        const timerDisplay = document.getElementById('timer');
+        const alarmOverlay = document.getElementById('alarm-overlay');
+
         function updateTimerDisplay(secondsLeft) {
             let m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
             let s = (secondsLeft % 60).toString().padStart(2, '0');
             timerDisplay.textContent = `${m}:${s}`;
         }
 
+        function triggerAlarm() {
+            alarmSound.play().catch(e => console.log("تحتاج تفاعل"));
+            alarmOverlay.style.display = "flex"; 
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("⏰ انتهت الساعة!", { body: "يرجى تسجيل إنجازاتك الآن." });
+            }
+        }
+
+        function stopAlarm() {
+            alarmSound.pause(); alarmSound.currentTime = 0;
+            alarmOverlay.style.display = "none";
+            document.getElementById('log-input').focus(); 
+            resetTimer(); 
+        }
+
         function timerTick() {
             let endTime = localStorage.getItem('timerEndTime');
             if (!endTime) return;
-
             let timeLeft = Math.round((endTime - Date.now()) / 1000);
-
             if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                isRunning = false;
+                clearInterval(timerInterval); isRunning = false;
                 localStorage.removeItem('timerEndTime');
-                
-                // تشغيل الصوت وإرسال الإشعار
-                alarmSound.play().catch(e => console.log("الصوت يحتاج تفاعل"));
-                sendNotification();
-                
-                updateTimerDisplay(0);
-                resetTimer();
-            } else {
-                updateTimerDisplay(timeLeft);
-            }
+                updateTimerDisplay(0); triggerAlarm(); 
+            } else { updateTimerDisplay(timeLeft); }
         }
 
         function startTimer() {
             if (isRunning) return;
-
-            // طلب صلاحية الإشعارات عند ضغط زر "بدء"
-            requestNotificationPermission();
-
-            // تشغيل صامت للسماح بالصوت لاحقاً
-            alarmSound.play().then(() => {
-                alarmSound.pause();
-                alarmSound.currentTime = 0;
-            }).catch(e => {});
-
+            if ("Notification" in window && Notification.permission !== "granted") Notification.requestPermission();
+            alarmSound.play().then(() => { alarmSound.pause(); alarmSound.currentTime = 0; }).catch(e => {});
             let endTime = localStorage.getItem('timerEndTime');
-            
             if (!endTime || endTime <= Date.now()) {
                 let savedRemaining = localStorage.getItem('pausedTimeLeft');
                 let timeToRun = savedRemaining ? parseInt(savedRemaining) : TOTAL_DURATION;
-                
                 endTime = Date.now() + (timeToRun * 1000);
                 localStorage.setItem('timerEndTime', endTime);
                 localStorage.removeItem('pausedTimeLeft');
             }
-
-            isRunning = true;
-            timerInterval = setInterval(timerTick, 1000);
-            timerTick(); 
+            isRunning = true; timerInterval = setInterval(timerTick, 1000); timerTick(); 
         }
 
         function pauseTimer() {
             if (!isRunning) return;
-            clearInterval(timerInterval);
-            isRunning = false;
-            
+            clearInterval(timerInterval); isRunning = false;
             let endTime = localStorage.getItem('timerEndTime');
             if (endTime) {
                 let timeLeft = Math.round((endTime - Date.now()) / 1000);
-                if (timeLeft > 0) {
-                    localStorage.setItem('pausedTimeLeft', timeLeft);
-                }
+                if (timeLeft > 0) localStorage.setItem('pausedTimeLeft', timeLeft);
                 localStorage.removeItem('timerEndTime');
             }
         }
 
         function resetTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            localStorage.removeItem('timerEndTime');
-            localStorage.removeItem('pausedTimeLeft');
-            updateTimerDisplay(TOTAL_DURATION);
+            clearInterval(timerInterval); isRunning = false;
+            localStorage.removeItem('timerEndTime'); localStorage.removeItem('pausedTimeLeft');
+            updateTimerDisplay(TOTAL_DURATION); alarmOverlay.style.display = "none"; alarmSound.pause();
         }
 
-        // --- نظام المهام والنقل التلقائي ---
+        // --- إدارة المهام ---
         function addLog() {
             const input = document.getElementById('log-input');
             const text = input.value.trim();
             if (text === "") return;
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            const timeString = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
             
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
             logs.push({ time: timeString, text: text });
             localStorage.setItem('workLogs', JSON.stringify(logs));
             
             const doneTextarea = document.getElementById('task-done');
-            const currentDoneText = doneTextarea.value.trim();
-            const newEntry = `- ${text} (${timeString})`;
-            
-            if (currentDoneText === "") {
-                doneTextarea.value = newEntry;
-            } else {
-                doneTextarea.value = currentDoneText + '\n' + newEntry;
-            }
+            doneTextarea.value = doneTextarea.value.trim() === "" ? `- ${text} (${timeString})` : doneTextarea.value + `\n- ${text} (${timeString})`;
             localStorage.setItem('task-done', doneTextarea.value);
 
-            input.value = "";
-            renderLogs();
+            input.value = ""; renderLogs();
         }
 
         function renderLogs() {
-            const list = document.getElementById('log-list');
-            list.innerHTML = "";
+            const list = document.getElementById('log-list'); list.innerHTML = "";
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
-            
             logs.forEach((log, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<span><b>[${log.time}]</b> ${log.text}</span> <span class="delete-log" onclick="deleteLog(${index})">×</span>`;
-                list.appendChild(li);
+                list.innerHTML += `<li><span><b>[${log.time}]</b> ${log.text}</span> <span class="delete-log" onclick="deleteLog(${index})">×</span></li>`;
             });
         }
 
         function deleteLog(index) {
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
-            logs.splice(index, 1);
-            localStorage.setItem('workLogs', JSON.stringify(logs));
-            renderLogs();
+            logs.splice(index, 1); localStorage.setItem('workLogs', JSON.stringify(logs)); renderLogs();
         }
 
-        function clearLogs() {
-            if(confirm("هل أنت متأكد من مسح جميع مسودات اليوم؟ (لن يمسح هذا ما تم نقله للمهام المنجزة)")) {
-                localStorage.removeItem('workLogs');
-                renderLogs();
-            }
-        }
+        function clearLogs() { if(confirm("مسح مسودات اليوم؟")) { localStorage.removeItem('workLogs'); renderLogs(); } }
 
-        // --- الحفظ التلقائي للنصوص ---
-        const textareas = ['task-done', 'task-progress', 'task-issues', 'task-next'];
-        
-        textareas.forEach(id => {
+        ['task-done', 'task-progress', 'task-issues', 'task-next'].forEach(id => {
             const el = document.getElementById(id);
             if (localStorage.getItem(id)) el.value = localStorage.getItem(id);
             el.addEventListener('input', () => localStorage.setItem(id, el.value));
         });
 
         function buildReportString() {
-            const done = document.getElementById('task-done').value;
-            const progress = document.getElementById('task-progress').value;
-            const issues = document.getElementById('task-issues').value;
-            const next = document.getElementById('task-next').value;
-
-            return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${done || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${progress || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${issues || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${next || "لا يوجد"}`;
+            return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${document.getElementById('task-done').value || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${document.getElementById('task-progress').value || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${document.getElementById('task-issues').value || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${document.getElementById('task-next').value || "لا يوجد"}`;
         }
 
-        function generateAndCopyReport() {
-            const finalReport = buildReportString();
-            navigator.clipboard.writeText(finalReport).then(() => {
-                alert("✅ تم نسخ التقرير بنجاح!");
-            });
+        function generateAndCopyReport() { navigator.clipboard.writeText(buildReportString()).then(() => alert("✅ تم النسخ!")); }
+        function sendViaWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(buildReportString())}`, '_blank'); }
+
+        // --- 4. الأرشيف ---
+        function saveToArchive() {
+            const report = buildReportString();
+            const dateStr = new Date().toLocaleDateString('ar-EG');
+            let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
+            
+            // تحديث تقرير اليوم إذا كان موجوداً، أو إضافته كجديد
+            const existingIndex = archive.findIndex(r => r.date === dateStr);
+            if (existingIndex > -1) archive[existingIndex].report = report;
+            else archive.push({ date: dateStr, report: report });
+            
+            localStorage.setItem('reportsArchive', JSON.stringify(archive));
+            alert("✅ تم حفظ التقرير في الأرشيف بنجاح!");
         }
 
-        function sendViaWhatsApp() {
-            const finalReport = buildReportString();
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(finalReport)}`;
-            window.open(whatsappUrl, '_blank');
+        function openArchive() {
+            document.getElementById('archive-modal').style.display = 'flex';
+            const list = document.getElementById('archive-list');
+            const archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
+            
+            if (archive.length === 0) {
+                list.innerHTML = "<p style='text-align:center;'>الأرشيف فارغ حالياً.</p>";
+                return;
+            }
+            
+            // عرض التقارير الأحدث أولاً
+            list.innerHTML = archive.reverse().map(a => `
+                <div class='archive-item'>
+                    <h3 style="margin-top:0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;">📅 ${a.date}</h3>
+                    <pre>${a.report}</pre>
+                </div>
+            `).join('');
         }
 
+        function closeArchive() { document.getElementById('archive-modal').style.display = 'none'; }
+
+        // التشغيل عند التحميل
         window.onload = function() {
             renderLogs();
             let endTime = localStorage.getItem('timerEndTime');
-            
             if (endTime) {
-                if (endTime > Date.now()) {
-                    startTimer();
-                } else {
+                if (endTime > Date.now()) startTimer();
+                else {
                     localStorage.removeItem('timerEndTime');
-                    updateTimerDisplay(0);
-                    sendNotification(); // إرسال إشعار إذا دخل التطبيق ووجد أن الوقت منتهي
-                    resetTimer();
+                    updateTimerDisplay(0); triggerAlarm();
                 }
             } else {
                 let paused = localStorage.getItem('pausedTimeLeft');
-                if (paused) {
-                    updateTimerDisplay(parseInt(paused));
-                }
+                if (paused) updateTimerDisplay(parseInt(paused));
             }
         };
     </script>
