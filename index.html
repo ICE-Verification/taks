@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد الانجازات اليومية | عزام</title>
+    <title>مساعد التقارير اليومية | عزام</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
@@ -141,6 +141,7 @@
 
             <button onclick="generateAndCopyReport()" class="btn-success">📋 نسخ التقرير</button>
             <button onclick="sendViaWhatsApp()" class="btn-whatsapp">💬 إرسال عبر واتساب</button>
+            <button onclick="clearReportFields()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; font-weight: bold;">🧹 إفراغ الخانات لبدء تقرير جديد</button>
             
             <div style="display: flex; gap: 10px;">
                 <button onclick="saveToArchive()" class="btn-archive">📥 حفظ في الأرشيف</button>
@@ -185,7 +186,7 @@
         function createNewTag() {
             let val = document.getElementById('new-tag-input').value.trim();
             if(!val) return;
-            if(!val.startsWith('#')) val = '#' + val; // إضافة الهاشتاغ تلقائياً إذا نساه المستخدم
+            if(!val.startsWith('#')) val = '#' + val;
             
             let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
             if(!tags.includes(val)) {
@@ -342,6 +343,16 @@
             if (localStorage.getItem(id)) el.value = localStorage.getItem(id);
             el.addEventListener('input', () => localStorage.setItem(id, el.value));
         });
+
+        // --- مسح خانات التقرير النهائي ---
+        function clearReportFields() {
+            if(confirm("هل أنت متأكد من إفراغ جميع خانات التقرير النهائي لبدء يوم جديد؟")) {
+                ['task-done', 'task-progress', 'task-issues', 'task-next'].forEach(id => {
+                    document.getElementById(id).value = '';
+                    localStorage.removeItem(id);
+                });
+            }
+        }
 
         function buildReportString() {
             return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${document.getElementById('task-done').value || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${document.getElementById('task-progress').value || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${document.getElementById('task-issues').value || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${document.getElementById('task-next').value || "لا يوجد"}`;
