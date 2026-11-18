@@ -3,159 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد التقارير اليومية | عزام</title>
+    <title>نظام تقارير العمل الاحترافي | عزام</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f8fafc;
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --accent: #d97706;
+            --bg: #f1f5f9;
             --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
             --whatsapp: #25D366;
-            --whatsapp-hover: #128C7E;
-            --warning: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
         }
-        /* الوضع الليلي */
+
         body.dark-mode {
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
+            --text-muted: #94a3b8;
             --border: #334155;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; transition: background 0.3s, color 0.3s; }
-        
-        /* شريط العنوان */
-        .header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 20px auto; }
-        h1 { color: var(--primary); font-size: 1.5rem; margin: 0; }
-        .btn-icon { background: none; border: 2px solid var(--border); color: var(--text); font-size: 1.2rem; cursor: pointer; padding: 8px 12px; border-radius: 8px; }
+        * { box-sizing: border-box; }
 
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; transition: background 0.3s; }
-        h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-        
-        .timer-display { font-size: 3.5rem; font-weight: bold; text-align: center; margin: 15px 0; color: var(--primary); font-variant-numeric: tabular-nums; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        button { background-color: var(--primary); color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s; flex: 1; min-width: 80px; }
-        button:hover { background-color: var(--primary-hover); }
-        .btn-danger { background-color: #ef4444; } .btn-danger:hover { background-color: #dc2626; }
-        .btn-success { background-color: #10b981; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px;}
-        .btn-whatsapp { background-color: var(--whatsapp); width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; font-weight: bold; }
-        .btn-archive { background-color: #64748b; margin-top: 10px; width: 100%; padding: 10px;}
-        
-        .btn-small { padding: 5px 10px; margin: 0; min-width: auto; font-size: 0.8rem; width: auto;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            transition: background 0.3s, color 0.3s;
+            line-height: 1.5;
+        }
 
-        /* التوسيم Tags */
-        .tags-container { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
-        .tag { background: var(--border); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; color: var(--text); transition: 0.2s; display: flex; align-items: center; gap: 5px;}
-        .tag:hover { background: var(--primary); color: white; }
-        .tag-delete { color: #ef4444; font-weight: bold; padding: 0 4px; border-radius: 50%; }
-        .tag-delete:hover { background: rgba(255,255,255,0.3); }
-        
-        .add-tag-box { display: flex; gap: 5px; width: 100%; margin-bottom: 15px;}
-        .add-tag-box input { margin: 0; padding: 8px; height: 100%; font-size: 0.9rem;}
-        .add-tag-box button { margin: 0; padding: 8px; flex: 0.2; font-size: 1rem;}
+        /* شريط العنوان العلوي */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1250px;
+            margin: 0 auto 15px auto;
+            background: var(--card);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--primary);
+        }
+        .header h1 { color: var(--primary); font-size: 1.35rem; margin: 0; }
+        .header-actions { display: flex; gap: 8px; }
+        .btn-icon {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
 
-        /* شاشة التنبيه والأرشيف */
-        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; backdrop-filter: blur(5px); }
-        .overlay-content { background: var(--card); padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; color: var(--text);}
-        .btn-stop-alarm { background-color: var(--warning); font-size: 1.2rem; padding: 20px; width: 100%; margin-top: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); animation: pulse 1.5s infinite; color: black; font-weight: bold;}
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* شريط بيانات التقرير (الاسم، الجهة، التاريخ) */
+        .meta-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            max-width: 1250px;
+            margin: 0 auto 20px auto;
+            background: var(--card);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .meta-group { display: flex; flex-direction: column; }
+        .meta-group label { font-size: 0.85rem; color: var(--text-muted); font-weight: bold; margin-bottom: 4px; }
+        .meta-group input {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+        }
 
-        input[type="text"], textarea { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; box-sizing: border-box; resize: vertical; background: var(--card); color: var(--text); }
-        textarea { height: 90px; }
-        
-        .log-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
-        .log-list li { background: var(--bg); padding: 12px; margin-bottom: 8px; border-radius: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;}
-        .delete-log { color: #ef4444; cursor: pointer; font-weight: bold; padding: 0 10px; font-size: 1.4rem; }
-        
-        .archive-item { text-align: right; background: var(--bg); padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        .archive-item pre { white-space: pre-wrap; font-family: inherit; margin: 10px 0; font-size: 0.95rem; line-height: 1.5;}
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
 
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } body { padding: 10px; } .archive-actions { flex-wrap: wrap; justify-content: flex-start;} }
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07);
+            position: relative;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* المؤقت */
+        .timer-box {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .timer-display {
+            font-size: 3.2rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .timer-settings select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .btn-group { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        button {
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: 0.2s;
+            flex: 1;
+        }
+        button:hover { opacity: 0.92; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-success { background-color: var(--success); }
+        .btn-whatsapp { background-color: var(--whatsapp); font-weight: bold; }
+        .btn-warning { background-color: var(--accent); color: #fff; font-weight: bold; }
+        .btn-secondary { background-color: #64748b; }
+
+        /* الوسوم Tags */
+        .add-tag-box { display: flex; gap: 6px; margin-bottom: 10px; }
+        .add-tag-box input { margin: 0; padding: 8px; flex: 1; }
+        .add-tag-box button { flex: 0.3; padding: 8px; }
+
+        .tags-container { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tag {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tag:hover { background: var(--primary-light); color: white; }
+        .tag-delete { color: var(--danger); font-weight: bold; cursor: pointer; }
+
+        /* الإدخال الساعي الذكي */
+        .quick-entry-box {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+        .entry-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .entry-row select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-family: inherit;
+            font-weight: bold;
+            flex: 0.45;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            background: var(--card);
+            color: var(--text);
+            resize: vertical;
+        }
+        textarea { height: 80px; margin-top: 5px; margin-bottom: 12px; }
+
+        /* شريط النسب السريعة */
+        .quick-badges {
+            display: flex;
+            gap: 6px;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .badge-btn {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+            font-size: 0.78rem;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: none;
+        }
+        .badge-btn:hover { background: var(--primary-light); color: #fff; }
+
+        /* سجل الساعات */
+        .log-list { list-style: none; padding: 0; max-height: 220px; overflow-y: auto; margin: 0; }
+        .log-list li {
+            background: var(--bg);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-right: 4px solid var(--primary-light);
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-log { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 8px; font-size: 1.2rem; }
+
+        /* النوافذ المنبثقة (المنبه والأرشيف) */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .overlay-content {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            color: var(--text);
+            text-align: center;
+        }
+        .btn-stop-alarm {
+            background-color: var(--accent);
+            font-size: 1.2rem;
+            padding: 18px;
+            width: 100%;
+            margin-top: 15px;
+            animation: pulse 1.5s infinite;
+            color: white;
+            font-weight: bold;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+        .archive-item {
+            text-align: right;
+            background: var(--bg);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .archive-item pre { white-space: pre-wrap; font-family: inherit; margin: 10px 0 0 0; font-size: 0.9rem; }
+
+        .field-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+            body { padding: 10px; }
+        }
+
+        /* تنسيق الطباعة وتصدير PDF */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .no-print, .header-actions, .left-panel, .report-actions, .quick-badges { display: none !important; }
+            .container { display: block; }
+            .card { box-shadow: none; border: none; padding: 0; }
+            textarea { border: 1px solid #ccc; height: auto; min-height: 60px; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- شريط العنوان -->
     <div class="header">
-        <h1>نظام التقارير اليومية</h1>
-        <button class="btn-icon" onclick="toggleDarkMode()">🌙 / ☀️</button>
+        <h1>📊 نظام تقارير العمل اليومية الاحترافي</h1>
+        <div class="header-actions no-print">
+            <button class="btn-icon" onclick="openArchive()" title="أرشيف التقارير">📂 الأرشيف (<span id="archive-count">0</span>)</button>
+            <button class="btn-icon" onclick="toggleDarkMode()" title="الوضع الليلي">🌙 / ☀️</button>
+        </div>
+    </div>
+
+    <!-- بيانات التقرير الأساسية -->
+    <div class="meta-bar">
+        <div class="meta-group">
+            <label>👤 اسم الموظف / المسؤول:</label>
+            <input type="text" id="meta-name" placeholder="عزام زينو">
+        </div>
+        <div class="meta-group">
+            <label>🏢 القسم / الجهة:</label>
+            <input type="text" id="meta-dept" placeholder="مثال: التنسيق الإداري / المطعم">
+        </div>
+        <div class="meta-group">
+            <label>📅 تاريخ التقرير:</label>
+            <input type="date" id="meta-date">
+        </div>
     </div>
 
     <div class="container">
-        <!-- القسم الأيسر: المؤقت والمسودات -->
-        <div class="card">
-            
-            <div id="alarm-overlay" class="overlay">
-                <div class="overlay-content">
-                    <h2 style="border:none; color: #d97706; font-size: 2rem; margin:0;">⏰ انتهت الساعة!</h2>
-                    <p style="font-size: 1.2rem;">حان وقت تسجيل ما أنجزته الآن.</p>
-                    <button class="btn-stop-alarm" onclick="stopAlarm()">🔕 إيقاف التنبيه والتسجيل</button>
+        <!-- القسم الأيسر: المؤقت والتسجيل الساعي -->
+        <div class="card left-panel no-print">
+            <h2>
+                <span>⏱️ مؤقت المتابعة الساعي</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="completed-hours-badge">ساعات مسجلة: 0</span>
+            </h2>
+
+            <div class="timer-box">
+                <div class="timer-settings">
+                    <span>مدة الجولة:</span>
+                    <select id="timer-duration-select" onchange="changeTimerDuration()">
+                        <option value="3600">60 دقيقة (ساعة كاملة)</option>
+                        <option value="2700">45 دقيقة</option>
+                        <option value="1800">30 دقيقة (نصف ساعة)</option>
+                        <option value="60">دقيقة واحدة (للتجربة)</option>
+                    </select>
+                </div>
+                <div class="timer-display" id="timer">60:00</div>
+                <div class="btn-group">
+                    <button onclick="startTimer()" class="btn-success">▶️ بدء</button>
+                    <button onclick="pauseTimer()" class="btn-warning">⏸️ إيقاف مؤقت</button>
+                    <button onclick="resetTimer()" class="btn-danger">🔄 تصفير</button>
                 </div>
             </div>
 
-            <h2>⏱️ مؤقت الإنجاز</h2>
-            <div class="timer-display" id="timer">60:00</div>
-            <div class="btn-group">
-                <button onclick="startTimer()">▶️ بدء</button>
-                <button onclick="pauseTimer()">⏸️ إيقاف</button>
-                <button onclick="resetTimer()" class="btn-danger">🔄 تصفير</button>
-            </div>
+            <h2>📝 التسجيل السريع (ساعة بساعة)</h2>
 
-            <h2 style="margin-top: 30px;">📝 مسودة الإنجاز الساعي</h2>
-            
-            <!-- إضافة وتعديل الوسوم -->
+            <!-- إدارة الوسوم -->
             <div class="add-tag-box">
-                <input type="text" id="new-tag-input" placeholder="وسم جديد (مثال: تسويق)">
-                <button onclick="createNewTag()">+ إضافة وسم</button>
+                <input type="text" id="new-tag-input" placeholder="إضافة وسم جديد (مثال: تسويق)">
+                <button onclick="createNewTag()" class="btn-secondary">+ وسم</button>
             </div>
-            <div class="tags-container" id="tags-container">
-                <!-- سيتم تحميل الوسوم هنا عبر الجافاسكريبت -->
+            <div class="tags-container" id="tags-container"></div>
+
+            <!-- صندوق الإدخال الموجه -->
+            <div class="quick-entry-box">
+                <div class="entry-row">
+                    <select id="log-category" title="أين تريد إدراج هذه الملاحظة في التقرير؟">
+                        <option value="task-done">✅ إلى: المهام المنجزة</option>
+                        <option value="task-progress">⏳ إلى: قيد التنفيذ</option>
+                        <option value="task-uncompleted">❌ إلى: غير المنجزة</option>
+                        <option value="task-issues">⚠️ إلى: المشكلات والعقبات</option>
+                    </select>
+                    <button id="mic-btn" onclick="startVoiceRecognition()" style="flex: 0.15; background-color: var(--danger); font-size: 1.1rem;" title="إدخال صوتي">🎙️</button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="log-input" placeholder="سجل ما تم خلال هذه الساعة..." onkeypress="if(event.key==='Enter') addLog()">
+                    <button onclick="addLog()" style="flex: 0.3;">إضافة ➕</button>
+                </div>
             </div>
 
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button id="mic-btn" onclick="startVoiceRecognition()" style="flex: 0.15; background-color: #ef4444; font-size: 1.2rem; padding: 10px;" title="تحدث لإدخال المهمة">🎙️</button>
-                <input type="text" id="log-input" placeholder="ماذا أنجزت؟ (اكتب أو تحدث)">
-                <button onclick="addLog()" style="margin-bottom: 15px; flex: 0.25;">إضافة</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-muted);">سجل اليوم الزمني:</span>
+                <button onclick="clearLogs()" class="badge-btn" style="color: var(--danger);">🗑️ مسح السجل</button>
             </div>
-            
             <ul class="log-list" id="log-list"></ul>
-            <button onclick="clearLogs()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 0.9rem;">🗑️ مسح المسودات</button>
         </div>
 
-        <!-- القسم الأيمن: التقرير -->
+        <!-- القسم الأيمن: بنود التقرير الخمسة -->
         <div class="card">
-            <h2>📋 التقرير النهائي</h2>
-            <label>1- المهام المنجزة:</label>
-            <textarea id="task-done"></textarea>
-            <label>2- المهام قيد التنفيذ:</label>
-            <textarea id="task-progress"></textarea>
-            <label>3- المشكلات والعقبات:</label>
-            <textarea id="task-issues"></textarea>
-            <label>4- خطة اليوم التالي:</label>
-            <textarea id="task-next"></textarea>
+            <h2>
+                <span>📋 بنود التقرير النهائي</span>
+                <button onclick="transferToTomorrow()" class="badge-btn no-print" style="background: var(--primary); color: #fff; padding: 5px 10px;" title="نسخ المهام قيد التنفيذ وغير المنجزة إلى خطة الغد">⤵️ ترحيل المتبقي للغد</button>
+            </h2>
 
-            <button onclick="generateAndCopyReport()" class="btn-success">📋 نسخ التقرير</button>
-            <button onclick="sendViaWhatsApp()" class="btn-whatsapp">💬 إرسال عبر واتساب</button>
-            <button onclick="clearReportFields()" class="btn-danger" style="width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; font-weight: bold;">🧹 إفراغ الخانات لبدء تقرير جديد</button>
-            
-            <div style="display: flex; gap: 10px;">
-                <button onclick="saveToArchive()" class="btn-archive">📥 حفظ في الأرشيف</button>
-                <button onclick="openArchive()" class="btn-archive">📂 عرض الأرشيف</button>
+            <div class="field-label">
+                <label>1- المهام المنجزة (خلال اليوم):</label>
             </div>
+            <textarea id="task-done" placeholder="- تم الانتهاء من..."></textarea>
+
+            <div class="field-label">
+                <label>2- المهام قيد التنفيذ (مع نسبة الإنجاز):</label>
+            </div>
+            <textarea id="task-progress" placeholder="- جاري العمل على..."></textarea>
+            <div class="quick-badges no-print">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">إدراج نسبة:</span>
+                <button class="badge-btn" onclick="insertAtField('task-progress', ' (25%) ')">25%</button>
+                <button class="badge-btn" onclick="insertAtField('task-progress', ' (50%) ')">50%</button>
+                <button class="badge-btn" onclick="insertAtField('task-progress', ' (75%) ')">75%</button>
+                <button class="badge-btn" onclick="insertAtField('task-progress', ' (90%) ')">90%</button>
+            </div>
+
+            <div class="field-label">
+                <label style="color: #dc2626;">3- المهام غير المنجزة (المؤجلة وسبب التأجيل):</label>
+            </div>
+            <textarea id="task-uncompleted" placeholder="- المهمة التي لم تبدأ أو تأجلت مع ذكر السبب..."></textarea>
+            <div class="quick-badges no-print">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">سبب سريع:</span>
+                <button class="badge-btn" onclick="insertAtField('task-uncompleted', ' [بانتظار الاعتماد] ')">بانتظار الاعتماد</button>
+                <button class="badge-btn" onclick="insertAtField('task-uncompleted', ' [ضيق الوقت / أولوية طارئة] ')">أولوية طارئة</button>
+                <button class="badge-btn" onclick="insertAtField('task-uncompleted', ' [نقص بيانات] ')">نقص بيانات</button>
+            </div>
+
+            <div class="field-label">
+                <label>4- المشكلات والعقبات (التي أثرت على العمل):</label>
+            </div>
+            <textarea id="task-issues" placeholder="- الصعوبات التقنية أو الإدارية التي واجهتك..."></textarea>
+
+            <div class="field-label">
+                <label>5- خطة اليوم التالي (الأولويات القادمة):</label>
+            </div>
+            <textarea id="task-next" placeholder="- أولويات العمل ليوم الغد..."></textarea>
+
+            <!-- أزرار التحكم بالتقرير -->
+            <div class="report-actions no-print" style="margin-top: 10px;">
+                <div class="btn-group" style="margin-bottom: 10px;">
+                    <button onclick="generateAndCopyReport()" class="btn-success" style="padding: 14px; font-weight: bold;">📋 نسخ التقرير المنسق</button>
+                    <button onclick="sendViaWhatsApp()" class="btn-whatsapp" style="padding: 14px;">💬 إرسال عبر واتساب</button>
+                </div>
+                <div class="btn-group">
+                    <button onclick="saveToArchive()" class="btn-secondary">📥 حفظ في الأرشيف</button>
+                    <button onclick="window.print()" class="btn-secondary">🖨️ طباعة / PDF</button>
+                    <button onclick="clearReportFields()" class="btn-danger">🧹 إفراغ الخانات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة التنبيه عند انتهاء الساعة -->
+    <div id="alarm-overlay" class="overlay no-print">
+        <div class="overlay-content">
+            <h2 style="border:none; color: var(--accent); font-size: 2rem; justify-content: center; margin:0;">⏰ انتهت جولة العمل!</h2>
+            <p style="font-size: 1.15rem;">سجّل ما أنجزته في هذه الساعة الآن قبل أن تتراكم الأعمال.</p>
+            <button class="btn-stop-alarm" onclick="stopAlarm()">🔕 إيقاف الرنين وبدء التسجيل</button>
         </div>
     </div>
 
     <!-- نافذة الأرشيف -->
-    <div id="archive-modal" class="overlay">
+    <div id="archive-modal" class="overlay no-print">
         <div class="overlay-content">
-            <h2>أرشيف التقارير السابقة</h2>
+            <h2>📂 أرشيف التقارير اليومية</h2>
             <div id="archive-list" style="text-align: right; margin-bottom: 20px;"></div>
-            <button onclick="closeArchive()" class="btn-danger">إغلاق الأرشيف</button>
+            <button onclick="closeArchive()" class="btn-danger" style="width: 100%;">إغلاق النافذة</button>
         </div>
     </div>
 
@@ -167,9 +504,26 @@
         }
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
 
-        // --- 2. إدارة الوسوم (Tags) الديناميكية ---
-        const defaultTags = ['#إدارة', '#مطعم', '#تصميم', '#اجتماع'];
-        
+        // --- 2. إعدادات البيانات الأساسية (الاسم، القسم، التاريخ) ---
+        function initMetaFields() {
+            const nameInput = document.getElementById('meta-name');
+            const deptInput = document.getElementById('meta-dept');
+            const dateInput = document.getElementById('meta-date');
+
+            nameInput.value = localStorage.getItem('meta-name') || 'عزام زينو';
+            deptInput.value = localStorage.getItem('meta-dept') || '';
+            
+            // ضبط تاريخ اليوم بصيغة YYYY-MM-DD
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = localStorage.getItem('meta-date') || today;
+
+            nameInput.addEventListener('input', () => localStorage.setItem('meta-name', nameInput.value));
+            deptInput.addEventListener('input', () => localStorage.setItem('meta-dept', deptInput.value));
+            dateInput.addEventListener('input', () => localStorage.setItem('meta-date', dateInput.value));
+        }
+
+        // --- 3. إدارة الوسوم (Tags) ---
+        const defaultTags = ['#إدارة', '#مطعم', '#متابعة', '#تصميم', '#اجتماع'];
         function loadTags() {
             let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
             const container = document.getElementById('tags-container');
@@ -177,19 +531,18 @@
             tags.forEach((tag, index) => {
                 container.innerHTML += `
                     <span class="tag" onclick="addTag('${tag}')">
-                        ${tag} 
-                        <span class="tag-delete" onclick="event.stopPropagation(); removeCustomTag(${index})" title="حذف الوسم">×</span>
+                        ${tag}
+                        <span class="tag-delete" onclick="event.stopPropagation(); removeCustomTag(${index})" title="حذف">×</span>
                     </span>`;
             });
         }
 
         function createNewTag() {
             let val = document.getElementById('new-tag-input').value.trim();
-            if(!val) return;
-            if(!val.startsWith('#')) val = '#' + val;
-            
+            if (!val) return;
+            if (!val.startsWith('#')) val = '#' + val;
             let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
-            if(!tags.includes(val)) {
+            if (!tags.includes(val)) {
                 tags.push(val);
                 localStorage.setItem('customTags', JSON.stringify(tags));
                 loadTags();
@@ -199,7 +552,7 @@
 
         function removeCustomTag(index) {
             let tags = JSON.parse(localStorage.getItem('customTags')) || defaultTags;
-            if(confirm(`هل أنت متأكد من حذف الوسم ${tags[index]}؟`)) {
+            if (confirm(`حذف الوسم ${tags[index]}؟`)) {
                 tags.splice(index, 1);
                 localStorage.setItem('customTags', JSON.stringify(tags));
                 loadTags();
@@ -212,10 +565,10 @@
             inputField.focus();
         }
 
-        // --- 3. الإدخال الصوتي ---
+        // --- 4. الإدخال الصوتي ---
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { alert("للأسف، متصفحك لا يدعم الإدخال الصوتي."); return; }
+            if (!SpeechRecognition) { alert("متصفحك لا يدعم الإدخال الصوتي. جرب متصفح Chrome."); return; }
             const recognition = new SpeechRecognition();
             recognition.lang = 'ar-SA';
             const micBtn = document.getElementById('mic-btn');
@@ -233,13 +586,21 @@
             recognition.onend = () => micBtn.style.backgroundColor = '#ef4444';
         }
 
-        // --- إعداد المنبه والمؤقت ---
+        // --- 5. المنبه والمؤقت الذكي ---
         const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
-        alarmSound.loop = true; 
-        const TOTAL_DURATION = 3600;
-        let timerInterval; let isRunning = false;
+        alarmSound.loop = true;
+        let totalDuration = parseInt(localStorage.getItem('customTimerDuration')) || 3600;
+        let timerInterval;
+        let isRunning = false;
         const timerDisplay = document.getElementById('timer');
         const alarmOverlay = document.getElementById('alarm-overlay');
+
+        function changeTimerDuration() {
+            const selectVal = parseInt(document.getElementById('timer-duration-select').value);
+            totalDuration = selectVal;
+            localStorage.setItem('customTimerDuration', totalDuration);
+            resetTimer();
+        }
 
         function updateTimerDisplay(secondsLeft) {
             let m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
@@ -248,18 +609,19 @@
         }
 
         function triggerAlarm() {
-            alarmSound.play().catch(e => console.log("تحتاج تفاعل"));
-            alarmOverlay.style.display = "flex"; 
+            alarmSound.play().catch(e => console.log("الصوت يتطلب تفاعل"));
+            alarmOverlay.style.display = "flex";
             if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("⏰ انتهت الساعة!", { body: "يرجى تسجيل إنجازاتك الآن." });
+                new Notification("⏰ انتهت ساعة العمل!", { body: "بادر بتسجيل ما أنجزته الآن." });
             }
         }
 
         function stopAlarm() {
-            alarmSound.pause(); alarmSound.currentTime = 0;
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
             alarmOverlay.style.display = "none";
-            document.getElementById('log-input').focus(); 
-            resetTimer(); 
+            document.getElementById('log-input').focus();
+            resetTimer();
         }
 
         function timerTick() {
@@ -267,30 +629,38 @@
             if (!endTime) return;
             let timeLeft = Math.round((endTime - Date.now()) / 1000);
             if (timeLeft <= 0) {
-                clearInterval(timerInterval); isRunning = false;
+                clearInterval(timerInterval);
+                isRunning = false;
                 localStorage.removeItem('timerEndTime');
-                updateTimerDisplay(0); triggerAlarm(); 
-            } else { updateTimerDisplay(timeLeft); }
+                updateTimerDisplay(0);
+                triggerAlarm();
+            } else {
+                updateTimerDisplay(timeLeft);
+            }
         }
 
         function startTimer() {
             if (isRunning) return;
             if ("Notification" in window && Notification.permission !== "granted") Notification.requestPermission();
             alarmSound.play().then(() => { alarmSound.pause(); alarmSound.currentTime = 0; }).catch(e => {});
+            
             let endTime = localStorage.getItem('timerEndTime');
             if (!endTime || endTime <= Date.now()) {
                 let savedRemaining = localStorage.getItem('pausedTimeLeft');
-                let timeToRun = savedRemaining ? parseInt(savedRemaining) : TOTAL_DURATION;
+                let timeToRun = savedRemaining ? parseInt(savedRemaining) : totalDuration;
                 endTime = Date.now() + (timeToRun * 1000);
                 localStorage.setItem('timerEndTime', endTime);
                 localStorage.removeItem('pausedTimeLeft');
             }
-            isRunning = true; timerInterval = setInterval(timerTick, 1000); timerTick(); 
+            isRunning = true;
+            timerInterval = setInterval(timerTick, 1000);
+            timerTick();
         }
 
         function pauseTimer() {
             if (!isRunning) return;
-            clearInterval(timerInterval); isRunning = false;
+            clearInterval(timerInterval);
+            isRunning = false;
             let endTime = localStorage.getItem('timerEndTime');
             if (endTime) {
                 let timeLeft = Math.round((endTime - Date.now()) / 1000);
@@ -300,116 +670,214 @@
         }
 
         function resetTimer() {
-            clearInterval(timerInterval); isRunning = false;
-            localStorage.removeItem('timerEndTime'); localStorage.removeItem('pausedTimeLeft');
-            updateTimerDisplay(TOTAL_DURATION); alarmOverlay.style.display = "none"; alarmSound.pause();
+            clearInterval(timerInterval);
+            isRunning = false;
+            localStorage.removeItem('timerEndTime');
+            localStorage.removeItem('pausedTimeLeft');
+            updateTimerDisplay(totalDuration);
+            alarmOverlay.style.display = "none";
+            alarmSound.pause();
         }
 
-        // --- إدارة المهام والمسودات ---
+        // --- 6. التسجيل الساعي والتوجيه الذكي للبنود الخمسة ---
+        const categoryLabels = {
+            'task-done': '✅ منجزة',
+            'task-progress': '⏳ قيد التنفيذ',
+            'task-uncompleted': '❌ غير منجزة',
+            'task-issues': '⚠️ عقبات'
+        };
+
         function addLog() {
             const input = document.getElementById('log-input');
+            const categorySelect = document.getElementById('log-category');
+            const targetFieldId = categorySelect.value;
             const text = input.value.trim();
             if (text === "") return;
-            const timeString = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-            
-            const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
-            logs.push({ time: timeString, text: text });
-            localStorage.setItem('workLogs', JSON.stringify(logs));
-            
-            const doneTextarea = document.getElementById('task-done');
-            doneTextarea.value = doneTextarea.value.trim() === "" ? `- ${text} (${timeString})` : doneTextarea.value + `\n- ${text} (${timeString})`;
-            localStorage.setItem('task-done', doneTextarea.value);
 
-            input.value = ""; renderLogs();
+            const timeString = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+
+            // حفظ في السجل الساعي
+            const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
+            logs.push({ time: timeString, text: text, cat: categoryLabels[targetFieldId] });
+            localStorage.setItem('workLogs', JSON.stringify(logs));
+
+            // توجيه مباشر للخانة المختارة في التقرير
+            const targetTextarea = document.getElementById(targetFieldId);
+            const entryLine = `- ${text} (${timeString})`;
+            targetTextarea.value = targetTextarea.value.trim() === "" ? entryLine : targetTextarea.value + `\n` + entryLine;
+            localStorage.setItem(targetFieldId, targetTextarea.value);
+
+            input.value = "";
+            renderLogs();
         }
 
         function renderLogs() {
-            const list = document.getElementById('log-list'); list.innerHTML = "";
+            const list = document.getElementById('log-list');
+            list.innerHTML = "";
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
+            document.getElementById('completed-hours-badge').textContent = `تسجيلات اليوم: ${logs.length}`;
+
             logs.forEach((log, index) => {
-                list.innerHTML += `<li><span><b>[${log.time}]</b> ${log.text}</span> <span class="delete-log" onclick="deleteLog(${index})" title="حذف">×</span></li>`;
+                list.innerHTML += `
+                    <li>
+                        <span><b>[${log.time}]</b> <small style="color:var(--primary-light)">(${log.cat || '✅ منجزة'})</small> ${log.text}</span>
+                        <span class="delete-log" onclick="deleteLog(${index})" title="حذف">×</span>
+                    </li>`;
             });
         }
 
         function deleteLog(index) {
             const logs = JSON.parse(localStorage.getItem('workLogs') || '[]');
-            logs.splice(index, 1); localStorage.setItem('workLogs', JSON.stringify(logs)); renderLogs();
+            logs.splice(index, 1);
+            localStorage.setItem('workLogs', JSON.stringify(logs));
+            renderLogs();
         }
 
-        function clearLogs() { if(confirm("مسح مسودات اليوم؟")) { localStorage.removeItem('workLogs'); renderLogs(); } }
+        function clearLogs() {
+            if (confirm("مسح سجل الساعات لهذا اليوم؟")) {
+                localStorage.removeItem('workLogs');
+                renderLogs();
+            }
+        }
 
-        ['task-done', 'task-progress', 'task-issues', 'task-next'].forEach(id => {
+        // --- 7. أدوات المساعدة في صياغة التقرير ---
+        const reportFields = ['task-done', 'task-progress', 'task-uncompleted', 'task-issues', 'task-next'];
+
+        reportFields.forEach(id => {
             const el = document.getElementById(id);
             if (localStorage.getItem(id)) el.value = localStorage.getItem(id);
             el.addEventListener('input', () => localStorage.setItem(id, el.value));
         });
 
-        // --- مسح خانات التقرير النهائي ---
+        // إدراج نسبة أو سبب سريع في آخر السطر
+        function insertAtField(fieldId, textToInsert) {
+            const el = document.getElementById(fieldId);
+            el.value = el.value.trimEnd() + textToInsert;
+            localStorage.setItem(fieldId, el.value);
+            el.focus();
+        }
+
+        // ترحيل المهام قيد التنفيذ وغير المنجزة إلى خطة الغد
+        function transferToTomorrow() {
+            const inProgress = document.getElementById('task-progress').value.trim();
+            const uncompleted = document.getElementById('task-uncompleted').value.trim();
+            const nextField = document.getElementById('task-next');
+
+            if (!inProgress && !uncompleted) {
+                alert("لا توجد مهام في قسمي (قيد التنفيذ) أو (غير المنجزة) لترحيلها.");
+                return;
+            }
+
+            let combined = [];
+            if (inProgress) combined.push("🔹 استكمال المهام قيد التنفيذ:\n" + inProgress);
+            if (uncompleted) combined.push("🔸 إنجاز المهام المؤجلة:\n" + uncompleted);
+
+            nextField.value = nextField.value.trim() ? nextField.value + "\n\n" + combined.join("\n") : combined.join("\n");
+            localStorage.setItem('task-next', nextField.value);
+            alert("✅ تم ترحيل المهام المتبقية إلى خطة اليوم التالي بنجاح!");
+        }
+
         function clearReportFields() {
-            if(confirm("هل أنت متأكد من إفراغ جميع خانات التقرير النهائي لبدء يوم جديد؟")) {
-                ['task-done', 'task-progress', 'task-issues', 'task-next'].forEach(id => {
+            if (confirm("هل أنت متأكد من إفراغ جميع خانات التقرير الخمسة لبدء تقرير جديد؟")) {
+                reportFields.forEach(id => {
                     document.getElementById(id).value = '';
                     localStorage.removeItem(id);
                 });
             }
         }
 
+        // --- 8. بناء نص التقرير الاحترافي ---
         function buildReportString() {
-            return `*تقرير العمل اليومي*\n\n*1- المهام المنجزة:*\n${document.getElementById('task-done').value || "لا يوجد"}\n\n*2- المهام قيد التنفيذ:*\n${document.getElementById('task-progress').value || "لا يوجد"}\n\n*3- المشكلات والعقبات:*\n${document.getElementById('task-issues').value || "لا يوجد"}\n\n*4- خطة اليوم التالي:*\n${document.getElementById('task-next').value || "لا يوجد"}`;
+            const empName = document.getElementById('meta-name').value.trim() || "غير محدد";
+            const empDept = document.getElementById('meta-dept').value.trim();
+            const repDate = document.getElementById('meta-date').value;
+
+            const done = document.getElementById('task-done').value.trim() || "لا يوجد";
+            const progress = document.getElementById('task-progress').value.trim() || "لا يوجد";
+            const uncompleted = document.getElementById('task-uncompleted').value.trim() || "لا يوجد";
+            const issues = document.getElementById('task-issues').value.trim() || "لا يوجد";
+            const next = document.getElementById('task-next').value.trim() || "لا يوجد";
+
+            let header = `*📋 تقرير العمل اليومي*\n`;
+            header += `👤 *الاسم:* ${empName}\n`;
+            if (empDept) header += `🏢 *القسم/الجهة:* ${empDept}\n`;
+            header += `📅 *التاريخ:* ${repDate}\n`;
+            header += `━━━━━━━━━━━━━━━\n\n`;
+
+            let body = `*1️⃣ المهام المنجزة:*\n${done}\n\n`;
+            body += `*2️⃣ المهام قيد التنفيذ (ونسبة الإنجاز):*\n${progress}\n\n`;
+            body += `*3️⃣ المهام غير المنجزة (المؤجلة):*\n${uncompleted}\n\n`;
+            body += `*4️⃣ المشكلات والعقبات:*\n${issues}\n\n`;
+            body += `*5️⃣ خطة اليوم التالي:*\n${next}`;
+
+            return header + body;
         }
 
-        function generateAndCopyReport() { navigator.clipboard.writeText(buildReportString()).then(() => alert("✅ تم النسخ!")); }
-        function sendViaWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(buildReportString())}`, '_blank'); }
+        function generateAndCopyReport() {
+            navigator.clipboard.writeText(buildReportString()).then(() => alert("✅ تم نسخ التقرير الاحترافي بنجاح!"));
+        }
 
-        // --- 4. إدارة الأرشيف ---
+        function sendViaWhatsApp() {
+            window.open(`https://wa.me/?text=${encodeURIComponent(buildReportString())}`, '_blank');
+        }
+
+        // --- 9. نظام الأرشيف المتقدم ---
+        function updateArchiveCount() {
+            const archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
+            document.getElementById('archive-count').textContent = archive.length;
+        }
+
         function saveToArchive() {
             const report = buildReportString();
-            const dateStr = new Date().toLocaleDateString('ar-EG');
+            const dateStr = document.getElementById('meta-date').value || new Date().toLocaleDateString('ar-EG');
             let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
-            
+
             const existingIndex = archive.findIndex(r => r.date === dateStr);
-            if (existingIndex > -1) archive[existingIndex].report = report;
-            else archive.push({ date: dateStr, report: report });
-            
+            if (existingIndex > -1) {
+                if (!confirm(`يوجد تقرير محفوظ بتاريخ (${dateStr})، هل تريد استبداله بالتحديث الجديد؟`)) return;
+                archive[existingIndex].report = report;
+            } else {
+                archive.push({ date: dateStr, report: report });
+            }
+
             localStorage.setItem('reportsArchive', JSON.stringify(archive));
-            alert("✅ تم حفظ تقرير اليوم في الأرشيف بنجاح!");
+            updateArchiveCount();
+            alert("✅ تم حفظ التقرير في الأرشيف!");
         }
 
         function openArchive() {
             document.getElementById('archive-modal').style.display = 'flex';
             const list = document.getElementById('archive-list');
             const archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
-            
+
             if (archive.length === 0) {
                 list.innerHTML = "<p style='text-align:center;'>الأرشيف فارغ حالياً.</p>";
                 return;
             }
-            
-            // عرض التقارير مع أزرار التحكم الجديدة
+
             list.innerHTML = [...archive].reverse().map(a => `
                 <div class='archive-item'>
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin:0; color: var(--primary);">📅 ${a.date}</h3>
-                        <div class="archive-actions" style="display: flex; gap: 5px;">
-                            <button onclick="actionArchiveReport('${a.date}', 'copy')" class="btn-success btn-small">📋 نسخ</button>
-                            <button onclick="actionArchiveReport('${a.date}', 'whatsapp')" class="btn-whatsapp btn-small">💬 واتساب</button>
-                            <button onclick="deleteFromArchive('${a.date}')" class="btn-danger btn-small">🗑️ حذف</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                        <h3 style="margin:0; color: var(--primary);">📅 تقرير: ${a.date}</h3>
+                        <div style="display: flex; gap: 6px;">
+                            <button onclick="actionArchiveReport('${a.date}', 'copy')" class="badge-btn" style="background:var(--success); color:#fff;">📋 نسخ</button>
+                            <button onclick="actionArchiveReport('${a.date}', 'whatsapp')" class="badge-btn" style="background:var(--whatsapp); color:#fff;">💬 واتساب</button>
+                            <button onclick="deleteFromArchive('${a.date}')" class="badge-btn" style="background:var(--danger); color:#fff;">🗑️ حذف</button>
                         </div>
                     </div>
                     <pre>${a.report}</pre>
                 </div>
             `).join('');
 
-            list.innerHTML += `<button onclick="clearArchive()" class="btn-danger" style="width: 100%; margin-top: 15px;">🗑️ مسح الأرشيف بالكامل</button>`;
+            list.innerHTML += `<button onclick="clearArchive()" class="btn-danger" style="width: 100%; margin-top: 10px;">🗑️ مسح الأرشيف بالكامل</button>`;
         }
 
-        // دالة مجمعة للنسخ أو الإرسال عبر واتساب من الأرشيف
         function actionArchiveReport(dateStr, actionType) {
             let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
             let targetReport = archive.find(r => r.date === dateStr);
-            if(targetReport) {
+            if (targetReport) {
                 if (actionType === 'copy') {
-                    navigator.clipboard.writeText(targetReport.report).then(() => alert("✅ تم نسخ التقرير القديم!"));
+                    navigator.clipboard.writeText(targetReport.report).then(() => alert("✅ تم نسخ التقرير من الأرشيف!"));
                 } else if (actionType === 'whatsapp') {
                     window.open(`https://wa.me/?text=${encodeURIComponent(targetReport.report)}`, '_blank');
                 }
@@ -417,34 +885,42 @@
         }
 
         function deleteFromArchive(dateStr) {
-            if(confirm(`هل أنت متأكد من حذف تقرير يوم ${dateStr}؟`)) {
+            if (confirm(`حذف تقرير تاريخ ${dateStr} نهائياً؟`)) {
                 let archive = JSON.parse(localStorage.getItem('reportsArchive') || '[]');
                 archive = archive.filter(r => r.date !== dateStr);
                 localStorage.setItem('reportsArchive', JSON.stringify(archive));
-                openArchive(); // تحديث العرض
+                updateArchiveCount();
+                openArchive();
             }
         }
 
         function clearArchive() {
-            if(confirm("⚠️ هل أنت متأكد من مسح جميع التقارير السابقة بالكامل؟")) {
+            if (confirm("⚠️ هل أنت متأكد من مسح كل الأرشيف؟")) {
                 localStorage.removeItem('reportsArchive');
-                openArchive(); 
+                updateArchiveCount();
+                openArchive();
             }
         }
 
         function closeArchive() { document.getElementById('archive-modal').style.display = 'none'; }
 
-        // --- التشغيل عند التحميل ---
+        // --- التشغيل عند فتح التطبيق ---
         window.onload = function() {
-            loadTags(); // تحميل الوسوم
+            initMetaFields();
+            loadTags();
             renderLogs();
-            
+            updateArchiveCount();
+
+            document.getElementById('timer-duration-select').value = totalDuration;
+            updateTimerDisplay(totalDuration);
+
             let endTime = localStorage.getItem('timerEndTime');
             if (endTime) {
                 if (endTime > Date.now()) startTimer();
                 else {
                     localStorage.removeItem('timerEndTime');
-                    updateTimerDisplay(0); triggerAlarm();
+                    updateTimerDisplay(0);
+                    triggerAlarm();
                 }
             } else {
                 let paused = localStorage.getItem('pausedTimeLeft');
